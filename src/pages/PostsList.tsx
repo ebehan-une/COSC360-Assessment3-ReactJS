@@ -1,42 +1,86 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import type { Post } from "../types/Post";
+import { useNavigate } from 'react-router-dom';
+//import type { Post } from '../types/Post';
+import { PostsAPI } from '../api/posts';
+import { PostTable } from '../components/PostTable';
+import { usePostsList } from '../hooks/usePostsList';
 
+/**
+ * @name PostsList
+ * @description Displays an array of Post(s) from the Laravel Server.
+ * @returns {JSX.Element} Rendered Page Layout.
+ */
 function PostsList() {
+
+    // React Router.
+    const navigate = useNavigate();
+
+    // State Variable, Updation.
+    const { posts, setPosts, error } = usePostsList();
+
+    // Handle Navigate Functions.
+    const handleView = ( id: number ) => navigate( `/post/${ id }` );
+    const handleEdit = ( id: number ) => navigate( `/post/edit/${ id }` );
+
+    // Handle Delete Function.
+    const handleDelete = async ( id: number ) => {
+        
+        const confirmed = window.confirm( "Are you sure you want to delete this post?" );
+
+        if ( !confirmed ) {
+
+            return;
+
+        }
+
+        const originalPosts = posts;
+
+        // Visually Remove Post.
+        setPosts( prevPosts => prevPosts.filter( post => post.id !== id ) );
+
+        try {
+
+            await PostsAPI.remove( id );
+        
+        }
+        catch ( err: any ) {
+
+            console.error("Error removing post: ", err );
+            alert( "Failed to delete post. Please try again. ");
+
+            // Amend Posts.
+            setPosts( originalPosts );
+
+        }
     
-    const [ posts, setPosts ] = useState< Post[] >( [] );
+    }
 
-    useEffect( () => {
+    // Display Errors.
+    if ( error ) {
+        
+        return (
+            <>
+                <div>
+                    { error }
+                </div>
+            </>
+        );
 
-        // fetch("http://localhost:8000/api/posts")
-        fetch( "/posts.json" )
-            .then( response => response.json() )
-            .then( data => setPosts( data ) );
-    }, [] );
+    }
 
+    // SPA HTML Render.
     return (
         <>
-            <h1>Posts</h1>
-            { posts.map( post => (
-                <div key={ post.id }>
-                    <h3>{ post.title }</h3>
-                    <Link to={`/post/${ post.id }`}>
-                        View Post
-                    </Link>
-                </div>
-            ))}
+            <div>List of Posts</div>
+            <div>
+                <PostTable
+                    posts={ posts }
+                    handleView={ handleView }
+                    handleEdit={ handleEdit }
+                    handleDelete={ handleDelete }
+                />
+            </div>
         </>
     );
 }
 
 export default PostsList;
-
-
-// PostsList loads
-// useEffect runs
-// fetch posts.json
-// posts.json
-// response.json()
-// setPosts(data)
-// React re-renders
-// posts.map

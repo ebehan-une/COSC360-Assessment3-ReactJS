@@ -2,65 +2,53 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import type { Post } from '../types/Post';
+import { PostsAPI } from '../api/posts';
+import { PostForm } from '../components/PostForm';
+
+/**
+ * @name PostCreate
+ * @description
+ * @returns {JSX.Element} Rendered Page Layout.
+ */
 function PostCreate() {
 
+    // React Router.
     const navigate = useNavigate();
 
-    const [ title, setTitle ] = useState("");
+    // State Variables, Updation.
+    const [ error, setError ] = useState< string | null >( null );
 
-    const [ content, setContent ] = useState("");
-
-    function handleSubmit( event: React.SubmitEvent<HTMLFormElement> ) {
-
-        event.preventDefault();
-
-        const newPost = {
-            id: Number,
-            title: title,
-            content: content,
-            created_at: Date.now(),
-            updated_at: Date.now()
-        }
-
-        console.log("New Post: ", newPost);
-        
-        alert("Post Created Successfully!");
-
-
-        
-        navigate("/"); // Return to main index page.
+    // Handle Create Function.
+    function handleCreate( formData: Pick<Post, "title" | "content">) {
+        PostsAPI.create(formData)
+                .then( ( newPost: Post ) => {
+                    alert( "Post created successfully! ");
+                    navigate( `/post/${ newPost.id }` );
+                })
+                .catch( ( error: any ) => {
+                    console.error( "Failed to create new post: ", error );
+                    setError( "Failed to save post to Laravel server. ");
+                });
     }
 
+    // Display Errors.
+    if ( error ) {
+        return <><div>{ error }</div></>;
+    }
+
+    // SPA HTML Render.
     return (
         <>
-            <h1>Create Post</h1>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label>Title</label>
-                    <br />
-
-                    < input type="text" value={ title } onChange={ event => setTitle( event.target.value ) } />
-                </div>
-                
-                <br />
-
-                < div >
-                    <label>Content</label>
-
-                    < br />
-
-                    <textarea value={ content } onChange={ event => setContent( event.target.value ) }/>
-
-
-                </div>
-
-                <button type="submit">Create Post</button>
-
-            </form>
+            <div>Create Post</div>
+            <div>
+                <PostForm
+                    onSubmit={ handleCreate }
+                    submitButtonText="Create Post"
+                />
+            </div>
         </>
     );
-
-
 }
 
 export default PostCreate;

@@ -1,44 +1,73 @@
+import { useNavigate, useParams } from 'react-router-dom';
+import type { Post } from '../types/Post';
+import { PostsAPI } from '../api/posts';
+import { PostForm } from '../components/PostForm';
+import { usePost } from '../hooks/usePost';
 
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-
-import type { Post } from "../types/Post";
-
+/**
+ * @name PostEdit
+ * @description Edits an existing post based on the URL Path: {id}.
+ * @returns {JSX.Element} Rendered Page Layout.
+ */
 function PostEdit() {
 
+    // React Router.
+    const navigate = useNavigate();
     const { id } = useParams();
 
-    const navigate = useNavigate();
+    // State Variables, Updation.
+    const { post, error } = usePost( id );
 
-    const [ title, setTitle ] = useState("");
+    // Handle Update Function.
+    function handleUpdate( formData: Pick<Post, "title" | "content">) {
 
-    const [ content, setContent ] = useState("");
+        PostsAPI.update( Number( id ), formData )
+                .then( () => {
+                    alert( "Post Updated Successfully!" );
+                    navigate( `/post/${ id }` );
+                })
+                .catch( ( err: any ) => {
+                    console.error( "Failed to Update Post on Laravel Server: ", err );
+                });
 
-    useEffect( () => {
-        
-        fetch("/posts.json")
+    }
 
-            .then( response => response.json() )
+    // Display Errors.
+    if ( error ) {
+        <>
+            <div>
+                { error }
+            </div>
+        </>
+    }
 
-            .then( ( posts: Post[] ) => {
-                
-                const post = posts.find(
-                  
-                    post => post.id === Number(id)
+    // SPA HTML Render.
+    return (
+        <>
+            <div>Edit Post.</div>
+            <div>
+                <PostForm
+                    post={ post }
+                    onSubmit={ handleUpdate }
+                    submitButtonText="Update Post"
+                />
+            </div>
+        </>
+    );
+}
 
-                );
+export default PostEdit;
 
-                if ( post ) {
+/*
 
-                    setTitle( post.title );
 
-                    setContent( post.content );
 
-                }
 
-            });
+    // Get Post API.
+    //get: ( id: number ) =>
+    //    api<Post>( `/api/posts/${ id }` ),
 
-    }, [ id ] );
+
 
     function handleSubmit( event: React.SubmitEvent<HTMLFormElement> ) {
 
@@ -94,5 +123,4 @@ function PostEdit() {
     );
 
 }
-
-export default PostEdit;
+*/

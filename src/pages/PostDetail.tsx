@@ -1,32 +1,26 @@
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { usePost } from '../hooks/usePost';
 
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
-import type { Post } from "../types/Post";
-
+/**
+ * @name PostDetail
+ * @description
+ * @returns { JSX.Element }
+ */
 function PostDetail() {
 
+    // React Router.
+    const navigate = useNavigate();
     const { id } = useParams();
 
-    const [ post, setPost ] = useState<Post|null>(null);
-
-    useEffect( () => {
-        
-        fetch("/posts.json")
-            .then( response => response.json() )
-            .then( (posts: Post[]) => {
-
-                const foundPost = posts.find(
-                    post => post.id === Number(id)
-                );
-
-                setPost(foundPost || null);
-            
-            })
-
-    }, [id] );
+    // State Variables, Updation.
+    const { post, error } = usePost( id );
 
     if ( !post ) {
-        return <p>Loading post...</p>;
+        return (
+            <>
+                <p>Loading Post...</p>
+            </>
+        );
     }
 
     return (
