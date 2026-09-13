@@ -1,3 +1,35 @@
+import { Routes, Route, Link } from "react-router-dom";
+
+import PostsList from "./pages/PostsList";
+import PostDetail from "./pages/PostDetail";
+import PostCreate from "./pages/PostCreate";
+import PostEdit from "./pages/PostEdit";
+
+export default function App() {
+
+  return (
+    <>
+      <nav>
+        <Link to="/">Home</Link> | <Link to="/post/create">Create</Link>
+      </nav>
+      <Routes>
+        <Route path="/" element={<PostsList />} />
+        <Route path="/post/:id" element={<PostDetail />} />
+        <Route path="/post/create" element={<PostCreate />} />
+        <Route path="/post/edit/:id" element={<PostEdit />} />
+      </Routes>
+    </>
+  );
+  
+}
+
+
+
+/*
+
+        <Route path="/post/create" element={<PostCreate />} />
+        <Route path="/post/edit/:id" element={<PostEdit />} />
+
 import { useState } from 'react'
 import heroImg from './assets/hero.png'
 import reactLogo from './assets/react.svg'
@@ -120,3 +152,5 @@ function App() {
 }
 
 export default App
+
+*/
