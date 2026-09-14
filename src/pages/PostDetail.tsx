@@ -1,48 +1,47 @@
-import { Link, useNavigate, useParams } from 'react-router-dom';
+/** React Imports. */
+import { Container } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+
+/** Personal Imports. */
+import { AlertError, Header, LoadingIcon, PostCard } from '../components';
 import { usePost } from '../hooks/usePost';
 
 /**
  * @name PostDetail
  * @description
- * @returns { JSX.Element }
+ * @returns { JSX.Element } Rendered Page Layout.
  */
 function PostDetail() {
 
     // React Router.
-    const navigate = useNavigate();
     const { id } = useParams();
 
     // State Variables, Updation.
-    const { post, error } = usePost( id );
+    const { post, error: fetchError } = usePost( id );
 
-    if ( !post ) {
-        return (
-            <>
-                <p>Loading Post...</p>
-            </>
-        );
-    }
-
+    // SPA HTML Render.
     return (
+        <Container>
 
-        <>
-            <h1>{ post.title }</h1>
-            <p>{ post.content }</p>
+            <Header text="Post Details" />
 
-            <Link to={`/post/edit/${ post.id }`}>
-                Edit Post
-            </Link>
+            { post ? (
+                <article>
+                    <PostCard
+                        post={ post }
+                    />
+                </article>
 
-            <br />
-            <br />
+            ) : (
+                <LoadingIcon text="Loading Post Details..." />
+            )}
+            
+            { fetchError && (
+                <AlertError error={ fetchError } />
+            )}
 
-            <Link to ="/">
-                Back to Posts
-            </Link>
-        </>
-
+        </Container>
     );
-
 }
 
 export default PostDetail;

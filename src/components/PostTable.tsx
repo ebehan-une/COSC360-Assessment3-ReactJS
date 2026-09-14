@@ -1,6 +1,6 @@
 import Table from 'react-bootstrap/Table';
-import type { Post } from "../types/Post";
-import { PostRow } from "./PostRow";
+import type { Post } from '../types/Post';
+import PostRow from './PostRow';
 
 /** Properties for PostTable. */
 type PostTableProps = {
@@ -13,11 +13,11 @@ type PostTableProps = {
 /**
  * @name PostTable
  * @description Displays an array of Post(s) mapped to a PostRow component.
- * @return {JSX.Element} Bootstrap Table Render.
+ * @return { JSX.Element } Bootstrap Table Render.
  */
 export function PostTable( { posts, handleView, handleEdit, handleDelete }: PostTableProps ) {
     return (
-        <Table striped bordered hover>
+        <Table striped bordered>
             <thead>
                 <tr>
                     <th>#</th>
@@ -41,3 +41,5 @@ export function PostTable( { posts, handleView, handleEdit, handleDelete }: Post
         </Table>
     );
 }
+
+export default PostTable;

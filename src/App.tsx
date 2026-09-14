@@ -1,15 +1,14 @@
 import { Routes, Route, Link } from "react-router-dom";
-import PostsList from "./pages/PostsList";
-import PostDetail from "./pages/PostDetail";
-import PostCreate from "./pages/PostCreate";
-import PostEdit from "./pages/PostEdit";
+import { PostCreate, PostDetail, PostEdit, PostsList } from './pages';
+import { Footer, NavigationBar } from './components';
 
-
-import { NavigationBar } from './components/NavigationBar';
-
+/**
+ * Single-Page Application.
+ * @name App
+ * @description
+ * @returns { JSX.Element } Single Page Layout Design.
+ */
 export default function App() {
-
-  // SPA HTML Structure.
   return (
     <>
       <NavigationBar />
@@ -19,7 +18,7 @@ export default function App() {
         <Route path="/post/create" element={<PostCreate />} />
         <Route path="/post/edit/:id" element={<PostEdit />} />
       </Routes>
+      <Footer text="Created by Ethan Behan using Laravel and ReactJS." />
     </>
   );
-
 }

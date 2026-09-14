@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type { Post } from '../types/Post';
 import { PostsAPI } from '../api/posts';
 
@@ -10,29 +9,47 @@ import { PostsAPI } from '../api/posts';
  */
 export function usePostsList() {
 
-    // React Router.
-    const navigate = useNavigate();
-
     // State Variables, Updation.
-    const [ error, setError ] = useState< string | null >( null );
+    const [ error, setError ] = useState< string | undefined >( undefined );
+    const [ loading, setLoading ] = useState< boolean >(true);
     const [ posts, setPosts ] = useState< Post[] >( [] );
 
     // API Get Post(s).
     useEffect( () => {
 
+        let isMounted = true;
+
         PostsAPI.list()
                 .then( ( data: Post[] ) => {
-                    setPosts( data )
+                    if ( isMounted ) {
+                        setPosts( data )
+                    }
                 })
-                .catch( ( err: any ) => {
-                    console.error( err );
-                    setError( err );
-                });
+                .catch( ( err: unknown ) => {
+                    if ( isMounted ) {
+                        if(err instanceof Error) {
+                            setError(err.message);
+                        }
+                        else {
+                            setError( "An unexpected error occured." );
+                        }
+                        console.error( {err} );
+                    }
+                })
+                .finally( () => {
+                    if ( isMounted ) {
+                        setLoading(false);
+                    }
+                })
 
-    }, [ navigate, PostsAPI ]);
+        return () => {
+            isMounted = false;
+        };
+
+    }, [] );
 
     // Return State Variables.
-    return { posts, setPosts, error };
+    return { posts, setPosts, error, setError, loading, setLoading };
 }
 
 export default usePostsList;

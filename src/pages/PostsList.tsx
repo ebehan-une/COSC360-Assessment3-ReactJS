@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
-//import type { Post } from '../types/Post';
+
+import { Container } from 'react-bootstrap';
+
 import { PostsAPI } from '../api/posts';
-import { PostTable } from '../components/PostTable';
+import { AlertError, Header, LoadingIcon, PostTable } from '../components';
 import { usePostsList } from '../hooks/usePostsList';
 
 /**
  * @name PostsList
  * @description Displays an array of Post(s) from the Laravel Server.
- * @returns {JSX.Element} Rendered Page Layout.
+ * @returns { JSX.Element } Rendered Page Layout.
  */
 function PostsList() {
 
@@ -15,7 +17,7 @@ function PostsList() {
     const navigate = useNavigate();
 
     // State Variable, Updation.
-    const { posts, setPosts, error } = usePostsList();
+    const { posts, setPosts, error: fetchError } = usePostsList();
 
     // Handle Navigate Functions.
     const handleView = ( id: number ) => navigate( `/post/${ id }` );
@@ -27,9 +29,7 @@ function PostsList() {
         const confirmed = window.confirm( "Are you sure you want to delete this post?" );
 
         if ( !confirmed ) {
-
             return;
-
         }
 
         const originalPosts = posts;
@@ -54,32 +54,28 @@ function PostsList() {
     
     }
 
-    // Display Errors.
-    if ( error ) {
-        
-        return (
-            <>
-                <div>
-                    { error }
-                </div>
-            </>
-        );
-
-    }
-
     // SPA HTML Render.
     return (
-        <>
-            <div>List of Posts</div>
-            <div>
+        <Container>
+
+            <Header text="List of Posts" />
+
+            { posts ? (
                 <PostTable
                     posts={ posts }
                     handleView={ handleView }
                     handleEdit={ handleEdit }
                     handleDelete={ handleDelete }
                 />
-            </div>
-        </>
+            ) : (
+                <LoadingIcon text="Loading Post List..." />
+            )}
+
+            { fetchError && (
+                <AlertError error={ fetchError } />
+            )}
+
+        </Container>
     );
 }
 

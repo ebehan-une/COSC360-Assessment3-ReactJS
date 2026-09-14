@@ -1,13 +1,18 @@
+import React from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import type { Post } from '../types/Post';
+
+import { Container } from 'react-bootstrap';
+
 import { PostsAPI } from '../api/posts';
-import { PostForm } from '../components/PostForm';
+import { AlertError, Header, LoadingIcon, PostForm } from '../components';
 import { usePost } from '../hooks/usePost';
+import type { Post } from '../types/Post';
 
 /**
  * @name PostEdit
  * @description Edits an existing post based on the URL Path: {id}.
- * @returns {JSX.Element} Rendered Page Layout.
+ * @returns { JSX.Element } Rendered Page Layout.
  */
 function PostEdit() {
 
@@ -16,111 +21,69 @@ function PostEdit() {
     const { id } = useParams();
 
     // State Variables, Updation.
-    const { post, error } = usePost( id );
+    const { post, error: fetchError } = usePost( id );
+    const [ submitting, setSubmitting ] = useState< boolean >( false );
+    const [ submitError, setSubmitError ] = useState< string | undefined >( undefined );
 
     // Handle Update Function.
-    function handleUpdate( formData: Pick<Post, "title" | "content">) {
+    function handleUpdate( event: React.SubmitEvent<HTMLFormElement> ) {
 
-        PostsAPI.update( Number( id ), formData )
+        // Prevent full-page Refresh.
+        event?.preventDefault();
+
+        const target = event.currentTarget;
+        const formData = new FormData(target);
+
+        const updateData: Pick<Post, "title" | "content"> = {
+            title: formData.get( 'title' ) as string,
+            content: formData.get( 'content' ) as string
+        }
+
+        setSubmitting( true );
+        setSubmitError( undefined );
+
+        PostsAPI.update( Number( id ), updateData )
                 .then( () => {
                     alert( "Post Updated Successfully!" );
                     navigate( `/post/${ id }` );
                 })
-                .catch( ( err: any ) => {
-                    console.error( "Failed to Update Post on Laravel Server: ", err );
+                .catch( ( err: unknown ) => {
+                    if ( err instanceof Error ) {
+                        setSubmitError(err.message);
+                    }
+                    else {
+                        setSubmitError( "An unexpected error has occured." );
+                    }
+                    console.error( { err } );
+                })
+                .finally( () => {
+                    setSubmitting(false);
                 });
 
     }
 
-    // Display Errors.
-    if ( error ) {
-        <>
-            <div>
-                { error }
-            </div>
-        </>
-    }
-
     // SPA HTML Render.
     return (
-        <>
-            <div>Edit Post.</div>
-            <div>
+        <Container>
+
+            <Header text="Edit Post" />
+            
+            { post ? (
                 <PostForm
-                    post={ post }
+                    post= { post }
                     onSubmit={ handleUpdate }
-                    submitButtonText="Update Post"
+                    submitButtonText={ submitting ? "Updating..." : "Update Post" }
                 />
-            </div>
-        </>
+            ) : (
+                <LoadingIcon text="Loading Post Details..." />
+            )}
+            
+            { ( fetchError || submitError ) && (
+                <AlertError error={ fetchError || submitError } />
+            )}
+
+        </Container>
     );
 }
 
 export default PostEdit;
-
-/*
-
-
-
-
-    // Get Post API.
-    //get: ( id: number ) =>
-    //    api<Post>( `/api/posts/${ id }` ),
-
-
-
-    function handleSubmit( event: React.SubmitEvent<HTMLFormElement> ) {
-
-        event.preventDefault();
-
-        const updatedPost = {
-
-            id: Number( id ),
-
-            title: title,
-
-            content: content,
-
-            updated_at: Date.now()
-
-        }
-
-        console.log("Updated Post: ", updatedPost);
-
-        alert("Post Updated Successfully!");
-
-        navigate( `/post/${ id }` );
-
-    }
-
-    return (
-        <>
-            <h1>Edit Post</h1>
-            <form onSubmit={ handleSubmit }>
-                <div>
-                    <label>Title</label>
-                    <br />
-
-                    < input type="text" value={ title } onChange={ event => setTitle( event.target.value ) } />
-                </div>
-                
-                <br />
-
-                < div >
-                    <label>Content</label>
-
-                    < br />
-
-                    <textarea value={ content } onChange={ event => setContent( event.target.value ) }/>
-
-
-                </div>
-
-                <button type="submit">Create Post</button>
-
-            </form>
-        </>
-    );
-
-}
-*/

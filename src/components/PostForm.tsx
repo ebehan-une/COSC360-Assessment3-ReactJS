@@ -1,103 +1,48 @@
-import Button from 'react-bootstrap/Button';
-import Form from 'react-bootstrap/Form';
+import { Button, Form } from 'react-bootstrap';
 import type { Post } from '../types/Post';
 
+/** Post Form Properties. */
 type PostFormProps = {
     post?: Post;
-    onSubmit?: ( event: ) => void;
+    onSubmit?: ( event: React.SubmitEvent<HTMLFormElement> ) => void;
     submitButtonText: string;
 }
 
 /**
  * @name PostForm
  * @description Form used for Creating and Updating Post data.
- * @param {Object, void, string}
+ * @param { Object, void, string }
  * @returns 
  */
 export function PostForm( { post, onSubmit, submitButtonText }: PostFormProps ) {
-
     return (
         <>
             <Form onSubmit={ onSubmit }>
-                <div>
-                    <label>Title</label>
-                    <input
-                </div>
-                <div>
-
-                </div>
-                <Button onClick="submit">{ submitButtonText }</Button>
-
-
-
-                <div>
-                    <label>Content</label>
-                </div>
-
-                <div>
-                    <label>Title</label>
-                    <br />
-
-                    < input type="text" value={ title } onChange={ event => setTitle( event.target.value ) } />
-                </div>
-                
-                <br />
-
-                < div >
-                    <label>Content</label>
-
-                    < br />
-
-                    <textarea value={ content } onChange={ event => setContent( event.target.value ) }/>
-
-
-                </div>
-
-                <button type="submit">Create Post</button>
-
-            </form>
-        </>
-
-
+                <Form.Group className="mb-3">
+                    <Form.Label className="fs-5 fw-semibold">Title</Form.Label>
+                    <Form.Control
+                        name="title"
+                        type="text"
+                        defaultValue={ post?.title }
+                        placeholder="Add a Creative Title!"
+                        size="lg"
+                    />           
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Form.Label className="fs-5 fw-semibold">Content</Form.Label>
+                    <Form.Control
+                        name="content"
+                        as="textarea"
+                        defaultValue={ post?.content }
+                        rows={ 3 }
+                    />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                    <Button type="submit">{ submitButtonText }</Button>
+                </Form.Group>
             </Form>
         </>
     );
 }
 
 export default PostForm;
-
-/*
-
-
-
-
-                <h1>Edit Post</h1>
-            <form onSubmit={ handleSubmit }>
-                <div>
-                    <label>Title</label>
-                    <br />
-
-                    < input type="text" value={ title } onChange={ event => setTitle( event.target.value ) } />
-                </div>
-                
-                <br />
-
-                < div >
-                    <label>Content</label>
-
-                    < br />
-
-                    <textarea value={ content } onChange={ event => setContent( event.target.value ) }/>
-
-
-                </div>
-
-                <button type="submit">Create Post</button>
-
-            </form>
-        </>
-
-
-
-}
-*/

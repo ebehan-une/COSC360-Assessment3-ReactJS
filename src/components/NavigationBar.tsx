@@ -1,49 +1,18 @@
+import { Container, Navbar } from 'react-bootstrap';
 
-import React from "react";
-import Button from "react-bootstrap";
-
-
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-
-
-export function NavigationBar {
-
-
-    //
+/**
+ * @name NavigationBar
+ * @description Provides a custom Navigation Bar for the Page.
+ * @returns { JSX.Element } Render Custom Navbar.
+ */
+export function NavigationBar() {
     return (
-        <Navbar>
-
-
-
+        <Navbar fixed="top">
+            <Container>
+                Ethan;s Blog ReactJS Site
+            </Container>
         </Navbar>
     );
-
-
-
 }
 
 export default NavigationBar;
-/*
-    return (
-
-        <nav class="">
-
-            <div>
-                
-                <a href="/" onClick={ (event) => handleLinkClick(event, '/') }/> ***
-
-                <
-
-
-
-
-            </div>
-
-
-        </nav>
-
-
-    );
-
-*/

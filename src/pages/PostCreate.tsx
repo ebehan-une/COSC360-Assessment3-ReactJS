@@ -1,15 +1,17 @@
-
+/** React Imports. */
 import { useState } from "react";
+import { Container } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-import type { Post } from '../types/Post';
+/** Personal Imports. */
 import { PostsAPI } from '../api/posts';
-import { PostForm } from '../components/PostForm';
+import { AlertError, Header, PostForm } from '../components';
+import type { Post } from '../types/Post';
 
 /**
  * @name PostCreate
  * @description
- * @returns {JSX.Element} Rendered Page Layout.
+ * @returns { JSX.Element } Rendered Page Layout.
  */
 function PostCreate() {
 
@@ -17,37 +19,62 @@ function PostCreate() {
     const navigate = useNavigate();
 
     // State Variables, Updation.
-    const [ error, setError ] = useState< string | null >( null );
+    const [ submitting, setSubmitting ] = useState< boolean >( false );
+    const [ submitError, setSubmitError ] = useState< string | undefined >( undefined );
 
     // Handle Create Function.
-    function handleCreate( formData: Pick<Post, "title" | "content">) {
-        PostsAPI.create(formData)
+    function handleCreate( event: React.SubmitEvent<HTMLFormElement> ) {
+
+        // Prevent full-page Refresh.
+        event?.preventDefault();
+
+        const target = event.currentTarget;
+        const formData = new FormData(target);
+
+        const createData: Pick<Post, "title" | "content"> = {
+            title: formData.get( 'title' ) as string,
+            content: formData.get( 'content' ) as string
+        }
+
+        setSubmitting( true );
+        setSubmitError( undefined );
+
+        PostsAPI.create(createData)
                 .then( ( newPost: Post ) => {
                     alert( "Post created successfully! ");
                     navigate( `/post/${ newPost.id }` );
                 })
-                .catch( ( error: any ) => {
-                    console.error( "Failed to create new post: ", error );
-                    setError( "Failed to save post to Laravel server. ");
+                .catch( ( err: unknown ) => {
+                    if ( err instanceof Error ) {
+                        setSubmitError( err.message );
+                    }
+                    else {
+                        setSubmitError( "An unexpected error has occured." );
+                    }
+                    console.error( err );
+                })
+                .finally( () => {
+                    setSubmitting(false);
                 });
-    }
 
-    // Display Errors.
-    if ( error ) {
-        return <><div>{ error }</div></>;
     }
 
     // SPA HTML Render.
     return (
-        <>
-            <div>Create Post</div>
-            <div>
-                <PostForm
-                    onSubmit={ handleCreate }
-                    submitButtonText="Create Post"
-                />
-            </div>
-        </>
+        <Container>
+            
+            <Header text="Create Post" />
+
+            <PostForm
+                onSubmit={ handleCreate }
+                submitButtonText={ submitting ? "Creating..." : "Create Post" }
+            />
+
+            { submitError && (
+                <AlertError error={ submitError }/>
+            )}
+
+        </Container>
     );
 }
 

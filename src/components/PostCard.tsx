@@ -1,8 +1,26 @@
-import styles from "../styles/PostCard.module.css";
+/** React Imports. */
 
-export function PostCard({ title, content }: { title:string; content:string }) {
-    return <article className={styles.card}>
-        <h3>{title}</h3>
-        <p>{content}</p>
-    </article>
+
+/** Personal Imports. */
+import type { Post } from '../types/Post';
+
+/** Post Card Properties. */
+type PostCardProps = {
+    post?: Post
 }
+
+/**
+ * @name
+ * @description
+ * @param param0
+ * @return { JSX.Element } 
+ */
+export function PostCard( { post }: PostCardProps ) {
+    return (
+        <>
+        
+        </>
+    );
+}
+
+export default PostCard;

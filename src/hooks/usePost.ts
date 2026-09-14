@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import type { Post } from '../types/Post';
 import { PostsAPI } from '../api/posts';
 
@@ -10,29 +9,50 @@ import { PostsAPI } from '../api/posts';
  */
 export function usePost( id: string | undefined ) {
 
-    // React Router.
-    const navigate = useNavigate();
-
     // State Variables, Updation.
-    const [ error, setError ] = useState< string | null>( null );
-    const [ post, setPost ] = useState< Post | null >(null);
+    const [ error, setError ] = useState< string | undefined >( undefined );
+    const [ loading, setLoading ] = useState< boolean >(true);
+    const [ post, setPost ] = useState< Post | undefined >(undefined);
 
     // API Get Post.
     useEffect( () => {
 
+        // Prevent Memory Leaks.
+        let isMounted = true;
+
         PostsAPI.get ( Number( id ) )
                 .then( ( data: Post ) => {
-                    setPost(data);
+                    if ( isMounted ) {
+                        setPost(data);
+                    }
                 })
-                .catch( ( error: any ) => {
-                    console.error(" Failed to fetch post from Laravel server: ", error );
-                    setError( "Failed to fetch post from Laravel server. ");
-                });
+                .catch( ( err: unknown ) => {
+                    if ( isMounted ) {
+                        if(err instanceof Error) {
+                            setError(err.message);
+                        }
+                        else {
+                            setError( "An unexpected error occured." );
+                        }
+                        console.error( { err } );
+                    }
+                })
+                .finally( () => {
+                    if ( isMounted ) {
+                        setLoading(false);
+                    }
+                })
 
-    }, [ id, navigate, PostsAPI ] );
+        return () => {
+            isMounted = false;
+        }
+
+        return
+
+    }, [ id ] );
 
     // Return State Variables.
-    return { post, setPost, error };
+    return { post, setPost, error, setError, loading, setLoading };
 }
 
 export default usePost;

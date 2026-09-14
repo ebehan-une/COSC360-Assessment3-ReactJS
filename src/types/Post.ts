@@ -1,3 +1,5 @@
+
+/** Post Type Interface. */
 export interface Post {
     id: number;
     title: string;

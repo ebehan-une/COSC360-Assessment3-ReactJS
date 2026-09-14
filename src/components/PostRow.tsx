@@ -1,4 +1,4 @@
-import Button from 'react-bootstrap/Button';
+import { Dropdown, SplitButton } from 'react-bootstrap';
 import type { Post } from "../types/Post";
 
 /** Properties for PostRow. */
@@ -12,10 +12,10 @@ type PostProps = {
 /**
  * @name PostRow
  * @description Displays an individual row of Post data.
- * @param {Object, void, void, void}
- * @returns {JSX.Element} Bootstrap Table Row Render.
+ * @param { Object, void, void, void }
+ * @returns { JSX.Element } Bootstrap Table Row Render.
  */
-export function PostRow( { post, onView, onEdit, onDelete }: PostProps ) {
+export function PostRow({ post, onView, onEdit, onDelete }: PostProps) {
     return (
         <tr>
             <td>{ post.id }</td>
@@ -23,10 +23,26 @@ export function PostRow( { post, onView, onEdit, onDelete }: PostProps ) {
             <td>{ post.content }</td>
             <td>{ post.created_at }</td>
             <td>
-                <Button variant="info" onClick={ () => onView?.( post.id ) }>View</Button>
-                <Button variant="primary" onClick={ () => onEdit?.( post.id )}>Edit</Button>
-                <Button variant="danger" onClick={ () => onDelete?.( post.id )}>Delete</Button>
+                <SplitButton
+                    title="View"
+                    variant="info"
+                    onClick={ () => onView?.( post.id ) }
+                    onSelect={ ( eventKey ) => {
+                        if ( eventKey === "edit" ) {
+                            onEdit?.( post.id );
+                        }
+                        if ( eventKey === "delete" ) {
+                            onDelete?.( post.id );
+                        }
+                    }}
+                >
+                    <Dropdown.Item eventKey="edit">Edit</Dropdown.Item>
+                    <Dropdown.Divider />
+                    <Dropdown.Item eventKey="delete" className="text-danger">Delete</Dropdown.Item>
+                </SplitButton>
             </td>
         </tr>
     );
 }
+
+export default PostRow;
