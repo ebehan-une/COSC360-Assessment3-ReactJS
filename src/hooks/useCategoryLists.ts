@@ -1,29 +1,28 @@
 import { useEffect, useState } from 'react';
-import type { Post } from '../types/Post';
-import { PostsAPI } from '../api/posts';
+import type { Category } from '../types/Category';
+import { CategoriesAPI } from '../api/categories';
 
 /**
- * @name usePost
- * @description Custom Hook, used for PostsAPI.get() Function.
- * @return { Object } { post, setPost, error }
+ * @name useCategoryLists
+ * @description Custom Hook,
+ * @return { Object } { categories, setCategories, error, setError, loading, setLoading }
  */
-export function usePost( id: string | undefined ) {
+export function useCategoryLists() {
 
     // State Variables, Updation.
     const [ error, setError ] = useState< string | undefined >( undefined );
     const [ loading, setLoading ] = useState< boolean >(true);
-    const [ post, setPost ] = useState< Post | undefined >(undefined);
+    const [ categories, setCategories ] = useState< Category[] >( [] );
 
-    // API Get Post.
+    // API Get Category(s).
     useEffect( () => {
 
-        // Prevent Memory Leaks.
         let isMounted = true;
 
-        PostsAPI.get ( Number( id ) )
-                .then( ( data: Post ) => {
+        CategoriesAPI.list()
+                .then( ( data: Category[] ) => {
                     if ( isMounted ) {
-                        setPost(data);
+                        setCategories( data )
                     }
                 })
                 .catch( ( err: unknown ) => {
@@ -34,7 +33,7 @@ export function usePost( id: string | undefined ) {
                         else {
                             setError( "An unexpected error occured." );
                         }
-                        console.error( { err } );
+                        console.error( {err} );
                     }
                 })
                 .finally( () => {
@@ -45,12 +44,12 @@ export function usePost( id: string | undefined ) {
 
         return () => {
             isMounted = false;
-        }
+        };
 
-    }, [ id ] );
+    }, [] );
 
     // Return State Variables.
-    return { post, setPost, error, setError, loading, setLoading };
+    return { categories, setCategories, error, setError, loading, setLoading };
 }
 
-export default usePost;
+export default useCategoryLists;

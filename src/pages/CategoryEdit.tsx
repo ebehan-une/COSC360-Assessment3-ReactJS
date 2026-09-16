@@ -4,26 +4,24 @@ import { Button, Container } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 
 /** Personal Imports. */
-import { PostsAPI } from '../api/posts';
-import { AlertError, Header, LoadingIcon, PostForm } from '../components';
-import useCategoryLists from '../hooks/useCategoryLists';
-import { usePost } from '../hooks/usePost';
-import type { Post } from '../types/Post';
+import { CategoriesAPI } from '../api/categories';
+import { AlertError, CategoryForm, Header, LoadingIcon } from '../components';
+import { useCategory } from '../hooks/useCategory';
+import type { Category } from '../types/Category';
 
 /**
- * @name PostEdit
- * @description Edits an existing post based on the URL Path: {id}.
+ * @name CategoryEdit
+ * @description Edits an existing Category based on the URL Path: {id}.
  * @returns { JSX.Element } Rendered Page Layout.
  */
-function PostEdit() {
+function CategoryEdit() {
 
     // React Router.
     const navigate = useNavigate();
     const { id } = useParams();
 
     // State Variables, Updation.
-    const { post, error: fetchError } = usePost( id );
-    const { categories } = useCategoryLists();
+    const { category, error: fetchError } = useCategory( id );
     const [ submitting, setSubmitting ] = useState< boolean >( false );
     const [ submitError, setSubmitError ] = useState< string | undefined >( undefined );
 
@@ -36,19 +34,18 @@ function PostEdit() {
         const target = event.currentTarget;
         const formData = new FormData(target);
 
-        const updateData: Pick<Post, "title" | "content" | "category_id" > = {
-            title: formData.get( 'title' ) as string,
+        const updateData: Pick<Category, "name" | "content" > = {
+            name: formData.get( 'name' ) as string,
             content: formData.get( 'content' ) as string,
-            category_id: formData.get( 'category_id' ) as string,
         }
 
         setSubmitting( true );
         setSubmitError( undefined );
 
-        PostsAPI.update( Number( id ), updateData )
+        CategoriesAPI.update( Number( id ), updateData )
                 .then( () => {
-                    alert( "Post Updated Successfully!" );
-                    navigate( `/post/${ id }` );
+                    alert( "Category Updated Successfully!" );
+                    navigate( `/category` );
                 })
                 .catch( ( err: unknown ) => {
                     if ( err instanceof Error ) {
@@ -68,17 +65,16 @@ function PostEdit() {
     // SPA HTML Render.
     return (
         <Container>
-            <Header text="Edit Post" />
-            <Button className="me-3 my-3" onClick={ () => navigate('/') }>Return to Post List</Button>
-            { post ? (
-                <PostForm
-                    post= { post }
-                    categories={ categories}
+            <Header text="Edit Existing Category" />
+            <Button className="me-3 my-3" onClick={ () => navigate('/category') }>Return to Category List</Button>
+            { category ? (
+                <CategoryForm
+                    category={ category }
                     onSubmit={ handleUpdate }
-                    submitButtonText={ submitting ? "Updating..." : "Update Post" }
+                    submitButtonText={ submitting ? "Updating..." : "Update Category" }
                 />
             ) : (
-                <LoadingIcon text="Loading Post Details..." />
+                <LoadingIcon text="Loading Category Details..." />
             )}
             { ( fetchError || submitError ) && (
                 <AlertError error={ fetchError || submitError } />
@@ -87,4 +83,4 @@ function PostEdit() {
     );
 }
 
-export default PostEdit;
+export default CategoryEdit;

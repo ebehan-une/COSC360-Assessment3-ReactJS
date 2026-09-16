@@ -1,4 +1,9 @@
+/** React Imports. */
 import { Container, Navbar } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+
+/** Personal Imports. */
+import { NavLogin } from './NavLogin';
 
 /**
  * @name NavigationBar
@@ -6,10 +11,19 @@ import { Container, Navbar } from 'react-bootstrap';
  * @returns { JSX.Element } Render Custom Navbar.
  */
 export function NavigationBar() {
+
+    const navigate = useNavigate();
+
+    // Return to Home Page.
+    function handleRoot() {
+        navigate('/');
+    }
+
     return (
-        <Navbar fixed="top">
+        <Navbar expand="lg" className="bg-body-tertiary">
             <Container>
-                Ethan;s Blog ReactJS Site
+                <Navbar.Brand onClick={ handleRoot }>COSC360 Assessment 3 Front End</Navbar.Brand>
+                <NavLogin />
             </Container>
         </Navbar>
     );

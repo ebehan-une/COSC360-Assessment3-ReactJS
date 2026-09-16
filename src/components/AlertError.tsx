@@ -1,3 +1,4 @@
+/** React Imports. */
 import { Alert } from 'react-bootstrap';
 
 /** Alert Error Properties. */
@@ -7,10 +8,12 @@ type AlertErrorProps = {
 }
 
 /**
- * 
+ * @name AlertError
+ * @return { JSX.Element } Custom Render, if Error has occured.
  */
 export function AlertError( { error, variant = "danger" }: AlertErrorProps ) {
 
+    // Return Custom Render if Error is defined.
     if ( error ) {
         return (
             <div className="mt-3">

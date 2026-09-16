@@ -23,6 +23,7 @@ export function PostTable( { posts, handleView, handleEdit, handleDelete }: Post
                     <th>#</th>
                     <th>Name</th>
                     <th>Content</th>
+                    <th>Category</th>
                     <th>Created At</th>
                     <th>Actions</th>
                 </tr>

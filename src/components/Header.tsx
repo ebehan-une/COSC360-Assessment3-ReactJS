@@ -12,7 +12,7 @@ type HeaderProps = {
  */
 export function Header( { text }: HeaderProps ) {
     return (
-        <h1 className="h3">{ text }</h1>
+        <h1 className="h3 my-4 text-center">{ text }</h1>
     );
 }
 

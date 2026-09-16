@@ -1,4 +1,4 @@
-import { Container, Row } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 
 /** Footer Properties. */
 type FooterProps = {
@@ -15,7 +15,7 @@ export function Footer( { text }: FooterProps ) {
     return (
         <footer>
             <Container>
-                <Row>{ text }</Row>
+                <p className="text-center text-muted">{ text }</p>
             </Container>
         </footer>
     );

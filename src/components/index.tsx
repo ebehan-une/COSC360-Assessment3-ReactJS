@@ -1,8 +1,12 @@
 /** Index provide single-line imports. */
 export { default as AlertError } from './AlertError';
+export { default as CategoryForm } from './CategoryForm';
+export { default as CategoryRow } from './CategoryRow';
+export { default as CategoryTable } from './CategoryTable';
 export { default as Footer } from './Footer';
 export { default as Header } from './Header';
 export { default as LoadingIcon } from './LoadingIcon';
+export { default as NavLogin } from './NavLogin';
 export { default as NavigationBar } from './NavigationBar';
 export { default as PostCard } from './PostCard';
 export { default as PostForm } from './PostForm';

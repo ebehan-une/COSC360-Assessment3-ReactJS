@@ -1,18 +1,18 @@
 import { useEffect, useState } from 'react';
-import type { Post } from '../types/Post';
-import { PostsAPI } from '../api/posts';
+import type { Category } from '../types/Category';
+import { CategoriesAPI } from '../api/categories';
 
 /**
- * @name usePost
- * @description Custom Hook, used for PostsAPI.get() Function.
- * @return { Object } { post, setPost, error }
+ * @name useCategory
+ * @description Custom Hook, used for CategoriesAPI.get() Function.
+ * @return { Object } { category, setCategory, error, setError, loading, setLoading }
  */
-export function usePost( id: string | undefined ) {
+export function useCategory( id: string | undefined ) {
 
     // State Variables, Updation.
     const [ error, setError ] = useState< string | undefined >( undefined );
-    const [ loading, setLoading ] = useState< boolean >(true);
-    const [ post, setPost ] = useState< Post | undefined >(undefined);
+    const [ loading, setLoading ] = useState< boolean >( true );
+    const [ category, setCategory ] = useState< Category | undefined >( undefined );
 
     // API Get Post.
     useEffect( () => {
@@ -20,10 +20,10 @@ export function usePost( id: string | undefined ) {
         // Prevent Memory Leaks.
         let isMounted = true;
 
-        PostsAPI.get ( Number( id ) )
-                .then( ( data: Post ) => {
+        CategoriesAPI.get ( Number( id ) )
+                .then( ( data: Category ) => {
                     if ( isMounted ) {
-                        setPost(data);
+                        setCategory(data);
                     }
                 })
                 .catch( ( err: unknown ) => {
@@ -50,7 +50,7 @@ export function usePost( id: string | undefined ) {
     }, [ id ] );
 
     // Return State Variables.
-    return { post, setPost, error, setError, loading, setLoading };
+    return { category, setCategory, error, setError, loading, setLoading };
 }
 
-export default usePost;
+export default useCategory;

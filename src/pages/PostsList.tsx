@@ -1,8 +1,10 @@
+/** React Imports. */
+import { Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
-import { Container } from 'react-bootstrap';
-
+/** Personal Imports. */
 import { PostsAPI } from '../api/posts';
+import { useAuth } from '../context/AuthContext'
 import { AlertError, Header, LoadingIcon, PostTable } from '../components';
 import { usePostsList } from '../hooks/usePostsList';
 
@@ -17,6 +19,7 @@ function PostsList() {
     const navigate = useNavigate();
 
     // State Variable, Updation.
+    const { authenticated } = useAuth();
     const { posts, setPosts, error: fetchError } = usePostsList();
 
     // Handle Navigate Functions.
@@ -57,9 +60,13 @@ function PostsList() {
     // SPA HTML Render.
     return (
         <Container>
-
             <Header text="List of Posts" />
-
+            { authenticated && (
+                <div>
+                    <Button className="me-3 my-3" onClick={ () => navigate('/post/create') }>Create New Post</Button>
+                    <Button className="my-3" onClick={ () => navigate('/category') }>Edit Categories</Button>
+                </div>
+            )}
             { posts ? (
                 <PostTable
                     posts={ posts }

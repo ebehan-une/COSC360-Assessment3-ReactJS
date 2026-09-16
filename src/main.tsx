@@ -1,23 +1,22 @@
+/** React Bootstrap Styling. */
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-/*
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
-
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
-)
-*/
-
+/** React Imports. */
 import App from "./App";
 import { BrowserRouter } from "react-router-dom"
 import { createRoot } from "react-dom/client";
 
+/** Personal Imports. */
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+
+/** App Structure. */
 createRoot(document.getElementById("root")!).render(
   <BrowserRouter>
-    <App />
+    <ThemeProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
   </BrowserRouter>
 );
